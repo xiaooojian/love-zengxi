@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>致曾希</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: "ZCOOL KuaiLe", "Microsoft YaHei", "微软雅黑", cursive;
+            position: relative;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .name-title {
+            font-size: 4rem;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            text-align: center;
+            z-index: 20;
+            position: relative;
+        }
+
+        .name-title.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .name-title.hide {
+            opacity: 0;
+            transform: scale(1.5);
+        }
+
+        .char {
+            display: inline-block;
+            animation: colorChange 2s infinite;
+        }
+
+        .char:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .char:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .char:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes colorChange {
+            0% { color: #ff69b4; }
+            20% { color: #ffd700; }
+            40% { color: #00ffff; }
+            60% { color: #7fff00; }
+            80% { color: #ff6347; }
+            100% { color: #ff69b4; }
+        }
+
+        .main-title {
+            font-size: 3rem;
+            color: #fff;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 1.5s ease, transform 1.5s ease, color 3s ease;
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .main-title.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .main-title.pink {
+            color: #ff69b4;
+        }
+
+        .word {
+            position: absolute;
+            font-size: 1.5rem;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 2s ease, color 3s ease;
+            pointer-events: none;
+        }
+
+        .word.show {
+            opacity: 0.8;
+        }
+
+        .word.pink {
+            color: #ff69b4;
+        }
+
+        .flower-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .flower {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0;
+            transform: scale(0) rotate(0deg);
+            transition: transform 1.5s ease-out, opacity 1.5s ease-out;
+        }
+
+        .flower.bloom {
+            opacity: 0.8;
+            transform: scale(1) rotate(360deg);
+        }
+
+        @media (max-width: 768px) {
+            .name-title {
+                font-size: 2.5rem;
+            }
+            .main-title {
+                font-size: 2rem;
+            }
+            .word {
+                font-size: 1.2rem;
+            }
+            .flower {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="name-title" id="nameTitle">
+            <span class="char">曾</span><span class="char">希</span>
+        </div>
+        <div class="main-title" id="mainTitle" style="display: none;">我会喜欢</div>
+        <div class="flower-container" id="flowerContainer"></div>
+    </div>
+
+    <script>
+        const words = [
+            "你的性格", "你的名字", "你的样子", "你的嘴巴", "你的鼻子",
+            "你的耳朵", "你的眼睛", "你的古板", "你的经历", "你的家乡",
+            "你的家人", "你的缺点", "你的灵动", "你的血型", "你的声音",
+            "你的不堪", "你的开朗", "你的优点", "你的伤心", "你的生日",
+            "你的快乐", "你的浪漫", "你的不甘", "你的星座", "你的腼腆",
+            "你的天真", "你的固执", "你的美丽", "你的尊严", "你的生气",
+            "你的三观", "你的底线", "你的温柔", "你的笑容", "你的拥抱",
+            "你的眼神", "你的陪伴", "你的鼓励", "你的信任", "你的理解",
+            "你的坚持", "你的勇气", "你的善良", "你的真诚", "你的热情",
+            "你的幽默", "你的智慧", "你的耐心", "你的细腻", "你的大方",
+            "你的自信", "你的坚强", "你的脆弱", "你的纯真", "你的可爱",
+            "你的阳光", "你的温暖", "你的贴心", "你的守护", "你的宠溺"
+        ];
+
+        const flowers = ["🌸", "💖", "💕", "🌺", "🌹", "🌷", "💐", "✨", "💫"];
+
+        const container = document.getElementById('container');
+        const nameTitle = document.getElementById('nameTitle');
+        const mainTitle = document.getElementById('mainTitle');
+        const flowerContainer = document.getElementById('flowerContainer');
+
+        function randomPosition() {
+            const padding = 10;
+            return {
+                x: padding + Math.random() * (window.innerWidth - padding * 2),
+                y: padding + Math.random() * (window.innerHeight - padding * 2)
+            };
+        }
+
+        function createWordElement(text) {
+            const wordEl = document.createElement('div');
+            wordEl.className = 'word';
+            wordEl.textContent = text;
+            const pos = randomPosition();
+            wordEl.style.left = pos.x + 'px';
+            wordEl.style.top = pos.y + 'px';
+            container.appendChild(wordEl);
+            return wordEl;
+        }
+
+        function createFlowerElement() {
+            const flowerEl = document.createElement('div');
+            flowerEl.className = 'flower';
+            flowerEl.textContent = flowers[Math.floor(Math.random() * flowers.length)];
+            const pos = randomPosition();
+            flowerEl.style.left = pos.x + 'px';
+            flowerEl.style.top = pos.y + 'px';
+            flowerContainer.appendChild(flowerEl);
+            return flowerEl;
+        }
+
+        function startAnimation() {
+            const wordElements = [];
+
+            setTimeout(() => {
+                nameTitle.classList.add('show');
+            }, 500);
+
+            setTimeout(() => {
+                nameTitle.classList.add('hide');
+                setTimeout(() => {
+                    nameTitle.style.display = 'none';
+                    mainTitle.style.display = 'block';
+                    setTimeout(() => {
+                        mainTitle.classList.add('show');
+                    }, 100);
+                }, 1500);
+            }, 4500);
+
+            setTimeout(() => {
+                mainTitle.textContent = '我会喜欢你的全部';
+            }, 7500);
+
+            words.forEach((word, index) => {
+                setTimeout(() => {
+                    const wordEl = createWordElement(word);
+                    wordElements.push(wordEl);
+                    setTimeout(() => {
+                        wordEl.classList.add('show');
+                    }, 100);
+                }, 8000 + index * 200);
+            });
+
+            setTimeout(() => {
+                mainTitle.classList.add('pink');
+                wordElements.forEach((el, i) => {
+                    setTimeout(() => {
+                        el.classList.add('pink');
+                    }, i * 100);
+                });
+            }, 8000 + words.length * 200 + 1000);
+
+            setTimeout(() => {
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const flowerEl = createFlowerElement();
+                        setTimeout(() => {
+                            flowerEl.classList.add('bloom');
+                        }, 50);
+                    }, i * 100);
+                }
+            }, 8000 + words.length * 200 + 4000);
+        }
+
+        startAnimation();
+    </script>
+</body>
+</html>
